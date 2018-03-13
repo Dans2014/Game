@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+
+        <style media="screen">
+            canvas{
+                border:3px black solid;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="id-canvas" width="500" height="300"></canvas>
+    </body>
+
+    <script type="text/javascript">
+
+var log = console.log.bind(console)
+
+var getImage = function(path){
+    var image = new Image()
+    image.src = path
+    return image
+}
+
+var Role = function(){
+    this.x = 10
+    this.y = 270
+    this.width = 20
+    this.height = 30
+    this.toLeft = false
+    this.toRight = false
+    this.speed = 5
+    this.high = 0
+    this.direct = 0
+    this.jumpSpeed = 15
+}
+
+var Brick = function(){
+    this.image = getImage('brick.png')
+}
+
+var Game = function(){
+    var canvas = document.querySelector('#id-canvas')
+    var ctx = canvas.getContext('2d')
+    var r = new Role()
+    var b = new Brick()
+
+    window.addEventListener('keydown',function(event){
+        log(event.key)
+        if(event.key == 'ArrowLeft'){r.toLeft = true}
+        else if(event.key == 'ArrowRight'){r.toRight = true}
+        else if(event.key == 'ArrowUp'){if(r.high==0){r.direct=1}}
+    })
+
+    window.addEventListener('keyup',function(event){
+        if(event.key == 'ArrowLeft'){r.toLeft = false}
+        else if(event.key == 'ArrowRight'){r.toRight = false}
+    })
+
+    setInterval(function(){
+        if(r.toLeft && r.x>0)r.x-=r.speed
+        if(r.toRight && r.x+r.width<500)r.x+=r.speed
+
+        if(r.high == 10){r.direct = 0;r.y+=r.jumpSpeed;r.high-=1}
+        else if(r.direct){r.y-=r.jumpSpeed;r.high+=1}
+        else if(r.high > 0 && r.direct == 0){r.y+=r.jumpSpeed;r.high-=1}
+
+        ctx.clearRect(0,0,canvas.width,canvas.height)
+        ctx.fillRect(r.x,r.y,r.width,r.height)
+        ctx.drawImage(b.image,100,200)
+        //log(r.high, r.direct,r.y)
+        log(b.image.width,b.image.height)
+    },1000/30)
+}
+
+Game()
+
+    </script>
+</html>
